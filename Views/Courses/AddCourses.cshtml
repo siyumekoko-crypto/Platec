@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Add Course";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Add New Course</h2>
+        <a href="/Courses/Index" class="btn btn-secondary">Back to Courses</a>
+    </div>
+
+    <form method="post">
+        <!-- Course Name -->
+        <div class="mb-3">
+            <label for="CourseName" class="form-label">Course Name</label>
+            <input type="text" class="form-control" id="CourseName" name="CourseName" placeholder="Enter course name" required />
+        </div>
+
+        <!-- Teacher -->
+        <div class="mb-3">
+            <label for="TeacherId" class="form-label">Teacher (optional)</label>
+            <select class="form-select" id="TeacherId" name="TeacherId">
+                <option value="">--Select Teacher--</option>
+                <!-- Teacher options will be populated dynamically -->
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Add Course</button>
+    </form>
+</div>
+<style>
+    .container {
+        max-width: 600px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    h2 {
+        font-weight: bold;
+    }
+</style>

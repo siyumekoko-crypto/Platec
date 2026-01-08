@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Platec.Data;
 
 namespace Platec.Controllers
 {
     public class LogInController : Controller
     {
+        private readonly MyAppContext _context;
+
+        public LogInController(MyAppContext context)
+        {
+            _context = context;
+        }
+
         // SHOW LOGIN PAGE
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Index()
         {
             return View();
         }
@@ -15,11 +23,13 @@ namespace Platec.Controllers
         [HttpPost]
         public IActionResult Login(string Username, string Password)
         {
-            // SAMPLE LOGIN CHECK (replace with DB later)
-            if (Username == "123" && Password == "123")
+            var user = _context.User
+                .FirstOrDefault(u => u.Username == Username && u.Password == Password);
+
+            if (user != null)
             {
-                // Redirect to Home/Index view
-                return RedirectToAction("Index", "Home");
+                // login success
+                return RedirectToAction("Index", "Admin");
             }
 
             ViewBag.Error = "Invalid username or password";
