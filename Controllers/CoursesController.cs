@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Platec.Data;
 using Platec.Models;
 
@@ -14,11 +15,16 @@ namespace Platec.Controllers
             _context = context;
         }
 
-        // SHOW LOGIN PAGE
+        // GET: Courses Dashboard
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            // Load all courses with teacher info
+            var courses = _context.Courses
+                .Include(c => c.Teacher)  // load Teacher navigation property
+                .ToList();
+
+            return View(courses);
         }
 
         [HttpGet]
@@ -27,40 +33,63 @@ namespace Platec.Controllers
             return View();
         }
 
-        // GET: Add Course
-        [HttpGet]
-        public IActionResult AddCourse()
+        [HttpGet, HttpPost]
+        public IActionResult AddCourse(string CourseName)
         {
-            // Get teachers for dropdown
-            ViewBag.Teachers = new SelectList(_context.User.Where(u => u.Role == UserRole.Teacher), "Userid", "Username");
-            return View();
-        }
-
-        // POST: Save Course
-        [HttpPost]
-        public IActionResult AddCourse(string CourseName, int? TeacherId)
-        {
-            if (string.IsNullOrWhiteSpace(CourseName))
+            if (Request.Method == "POST")
             {
-                ViewBag.Message = "Course name is required!";
-                ViewBag.Teachers = new SelectList(_context.User.Where(u => u.Role == UserRole.Teacher), "Userid", "Username");
-                return View();
+                if (string.IsNullOrWhiteSpace(CourseName))
+                {
+                    ViewBag.Message = "Course name is required!";
+                    return View();
+                }
+
+                var course = new Course
+                {
+                    CourseName = CourseName
+                };
+
+                _context.Courses.Add(course);
+                _context.SaveChanges();
+
+                ViewBag.Message = "Course added successfully!";
+                ModelState.Clear();
             }
 
-            var course = new Course
-            {
-                CourseName = CourseName,
-                TeacherId = TeacherId
-            };
-
-            _context.Courses.Add(course);
-            _context.SaveChanges();
-
-            ViewBag.Message = "Course added successfully!";
-            ModelState.Clear();
-
-            ViewBag.Teachers = new SelectList(_context.User.Where(u => u.Role == UserRole.Teacher), "Userid", "Username");
-            return View();
+            return View("AddCourses");
         }
+
+        //// GET: Show Add Course Page
+        //[HttpGet]
+        //public IActionResult AddCourse()
+        //{
+        //    return View();
+        //}
+
+        //// POST: Save Course
+        //[HttpPost]
+        //public IActionResult AddCourse(string CourseName)
+        //{
+        //    if (string.IsNullOrWhiteSpace(CourseName))
+        //    {
+        //        ViewBag.Message = "Course name is required!";
+        //        return View();
+        //    }
+
+        //    // Create new course object
+        //    var course = new Course
+        //    {
+        //        CourseName = CourseName
+        //    };
+
+        //    // Add to DB and save
+        //    _context.Courses.Add(course);
+        //    _context.SaveChanges();
+
+        //    ViewBag.Message = "Course added successfully!";
+        //    ModelState.Clear(); // clear form fields
+
+        //    return View();
+        //}
     }
 }
