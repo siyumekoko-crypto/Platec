@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Platec.Models.Course>
+@{
+    ViewData["Title"] = "Courses Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Course Overview</h2>
+        <a href="/Courses/AddCourse" class="btn btn-success">
+            <i class="bi bi-plus"></i> Add Course
+        </a>
+    </div>
+
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@course.CourseName</h5>
+                        <p class="card-text"><strong>Students:</strong> 0</p>
+                        <p class="card-text">
+                            <strong>Teacher:</strong> @(course.Teacher != null ? course.Teacher.Username : "None")
+                        </p>
+                        <button class="btn btn-primary mt-2">View Details</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card-body h5 {
+        font-weight: bold;
+    }
+</style>
