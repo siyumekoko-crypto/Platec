@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Platec.Models.Course>
+
 @{
     ViewData["Title"] = "Courses Dashboard";
 }
@@ -18,15 +19,40 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">@course.CourseName</h5>
-                        <p class="card-text"><strong>Students:</strong> 0</p>
+
                         <p class="card-text">
-                            <strong>Teacher:</strong> @(course.Teacher != null ? course.Teacher.Username : "None")
+                            <strong>Students:</strong> 0
                         </p>
-                        <button class="btn btn-primary mt-2">View Details</button>
+
+                        <p class="card-text">
+                            <strong>Teacher:</strong>
+                            @(course.Teacher != null ? course.Teacher.Username : "None")
+                        </p>
+
+                        <button class="btn btn-primary view-details-btn"
+                                data-id="@course.CourseId">
+                            View Details
+                        </button>
                     </div>
                 </div>
             </div>
         }
+    </div>
+</div>
+
+<!-- COURSE DETAILS MODAL -->
+<div class="modal fade" id="courseDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Course Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="courseDetailsContent">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
     </div>
 </div>
 
@@ -35,3 +61,18 @@
         font-weight: bold;
     }
 </style>
+
+@section Scripts {
+    <script>
+        $(document).on("click", ".view-details-btn", function () {
+            var courseId = $(this).data("id");
+
+            $("#courseDetailsContent").load(
+                "/Courses/CourseDetails/" + courseId,
+                function () {
+                    $("#courseDetailsModal").modal("show");
+                }
+            );
+        });
+    </script>
+}

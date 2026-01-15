@@ -59,6 +59,21 @@ namespace Platec.Controllers
             return View("AddCourses");
         }
 
+        // COURSE DETAILS (MODAL)
+        public IActionResult CourseDetails(int id)
+        {
+            var course = _context.Courses
+                .Include(c => c.Teacher)
+                .FirstOrDefault(c => c.CourseId == id);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView(course);
+        }
+
         //// GET: Show Add Course Page
         //[HttpGet]
         //public IActionResult AddCourse()
