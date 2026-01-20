@@ -20,11 +20,16 @@ namespace Platec.Controllers
             return View();
         }
 
+        public IActionResult StudentManagement()
+        {
+            return View();
+        }
+
         [HttpPost]
-        public IActionResult AddUser(string Username, string Password, string Role)
+        public IActionResult AddUser(string Email, string Password, string Role)
         {
             // Validation
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Role))
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Role))
             {
                 ViewBag.Message = "Please fill in all fields!";
                 return View("Index"); // show the same page
@@ -41,7 +46,7 @@ namespace Platec.Controllers
             // Create new user
             var newUser = new Users
             {
-                Username = Username,
+                Email = Email,
                 Password = Password, // hash in production
                 Role = userRole
             };
@@ -54,5 +59,38 @@ namespace Platec.Controllers
             ModelState.Clear(); // <-- This clears all the form fields
             return View("Index"); // stay on the same page
         }
+        [HttpPost]
+        public IActionResult AddStudent(string Username, string Password)
+        {
+            // Validation
+            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+            {
+                ViewBag.Message = "Please fill in all fields!";
+                return View("Index");
+            }
+
+            // OPTIONAL: prevent duplicate usernames
+            bool exists = _context.Students.Any(s => s.Username == Username);
+            if (exists)
+            {
+                ViewBag.Message = "Username already exists!";
+                return View("Index");
+            }
+
+            var newStudent = new Student
+            {
+                Username = Username,
+                Password = Password // ⚠ hash in production
+            };
+
+            _context.Students.Add(newStudent);
+            _context.SaveChanges();
+
+            ViewBag.Message = "Student added successfully!";
+            ModelState.Clear();
+
+            return View("Index");
+        }
+
     }
 }

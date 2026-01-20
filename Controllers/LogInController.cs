@@ -24,7 +24,7 @@ namespace Platec.Controllers
         public IActionResult Login(string Username, string Password)
         {
             var user = _context.User
-                .FirstOrDefault(u => u.Username == Username && u.Password == Password);
+                .FirstOrDefault(u => u.Email == Username && u.Password == Password);
 
             if (user != null)
             {

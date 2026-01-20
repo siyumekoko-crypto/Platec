@@ -47,6 +47,33 @@
             text-align: center;
             background-color: #212529;
         }
+
+        /* Hover Dropdown */
+        .dropdown-hover {
+            position: relative;
+        }
+
+        .dropdown-menu-custom {
+            display: none;
+            flex-direction: column;
+            background-color: #495057;
+        }
+
+        .dropdown-hover:hover .dropdown-menu-custom {
+            display: block;
+        }
+
+        .dropdown-item {
+            color: #fff;
+            padding: 10px 40px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .dropdown-item:hover {
+                background-color: #6c757d;
+            }
+
     </style>
 </head>
 <body>
@@ -57,7 +84,20 @@
         </div>
         <nav class="nav flex-column">
             <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
-            <a class="nav-link" asp-controller="Registration" asp-action="Index">Add User</a>
+
+            <!-- User Management with Hover Dropdown -->
+            <div class="nav-item dropdown-hover">
+                <a class="nav-link">User Management</a>
+                <div class="dropdown-menu-custom">
+                    <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
+                        Student Management
+                    </a>
+                    <a class="dropdown-item" asp-controller="Registration" asp-action="Index">
+                        Admin Management
+                    </a>
+                </div>
+            </div>
+
             <a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a>
             <a class="nav-link" asp-controller="Attendance" asp-action="Index">Attendance Sheet</a>
             <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
