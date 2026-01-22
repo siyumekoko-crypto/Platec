@@ -89,7 +89,7 @@ namespace Platec.Controllers
             ViewBag.Message = "Student added successfully!";
             ModelState.Clear();
 
-            return View("Index");
+            return View("StudentManagement");
         }
 
     }

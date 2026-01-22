@@ -59,7 +59,6 @@ namespace Platec.Controllers
             return View("AddCourses");
         }
 
-        // COURSE DETAILS (MODAL)
         public IActionResult CourseDetails(int id)
         {
             var course = _context.Courses
@@ -67,12 +66,48 @@ namespace Platec.Controllers
                 .FirstOrDefault(c => c.CourseId == id);
 
             if (course == null)
-            {
                 return NotFound();
+
+            ViewBag.Teachers = _context.User
+                .Where(u => u.Role == UserRole.Teacher)
+                .ToList();
+
+            return PartialView("_CourseDetails", course);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var course = _context.Courses
+                .Include(c => c.Teacher)
+                .FirstOrDefault(c => c.CourseId == id);
+
+            if (course == null)
+                return NotFound();
+
+            ViewBag.Teachers = _context.User
+                .Where(u => u.Role == UserRole.Teacher)
+                .ToList();
+
+            return View(course);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Course course)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Courses.Update(course);
+                _context.SaveChanges();
+                return RedirectToAction("Details", new { id = course.CourseId });
             }
 
-            return PartialView(course);
+            ViewBag.Teachers = _context.User
+                .Where(u => u.Role == UserRole.Teacher)
+                .ToList();
+
+            return View(course);
         }
+
 
         //// GET: Show Add Course Page
         //[HttpGet]

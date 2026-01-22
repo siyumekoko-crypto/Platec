@@ -15,6 +15,7 @@ namespace Platec.Models
         public int? TeacherId { get; set; }  // FK to Users table
         public virtual Users Teacher { get; set; }
 
-        public ICollection<Course> Courses { get; set; } = new List<Course>();
+        //public ICollection<Course> Courses { get; set; } = new List<Course>();
+
     }
 }
