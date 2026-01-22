@@ -3,8 +3,54 @@
     ViewData["Title"] = "Login";
 }
 
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+   background: url('photo/login-bg.png');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    align-content:center;
+    justify-content:center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 10px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-login:hover {
+    background-color: #1e40af;
+}
+</style>
+
 <div class="login-container">
-    <h2>Login</h2>
+    <h2 align = "center">Login</h2>
 
     <form asp-action="Login" method="post">
         <div class="form-group">
