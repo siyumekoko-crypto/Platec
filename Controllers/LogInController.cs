@@ -21,10 +21,10 @@ namespace Platec.Controllers
 
         // HANDLE LOGIN
         [HttpPost]
-        public IActionResult Login(string Username, string Password)
+        public IActionResult Login(string Email, string Password)
         {
             var user = _context.User
-                .FirstOrDefault(u => u.Email == Username && u.Password == Password);
+                .FirstOrDefault(u => u.Email == Email && u.Password == Password);
 
             if (user != null)
             {
@@ -33,7 +33,7 @@ namespace Platec.Controllers
             }
 
             ViewBag.Error = "Invalid username or password";
-            return View();
+            return View("Index", "LogIn");
         }
     }
 }

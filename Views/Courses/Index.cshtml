@@ -21,7 +21,7 @@
                         <h5 class="card-title">@course.CourseName</h5>
 
                         <p class="card-text">
-                            <strong>Students:</strong> 0
+                            <strong>Students:</strong> @course.Students.Count
                         </p>
 
                         <p class="card-text">
@@ -29,30 +29,17 @@
                             @(course.Teacher != null ? course.Teacher.Email : "None")
                         </p>
 
-                        <button class="btn btn-primary view-details-btn"
-                                data-id="@course.CourseId">
+                        <a asp-controller="Courses"
+                           asp-action="CoursesDetails"
+                           asp-route-id="@course.CourseId"
+                           class="btn btn-primary">
                             View Details
-                        </button>
+                        </a>
+
                     </div>
                 </div>
             </div>
         }
-    </div>
-</div>
-
-<!-- COURSE DETAILS MODAL -->
-<div class="modal fade" id="courseDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Course Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body" id="courseDetailsContent">
-                <!-- Loaded dynamically -->
-            </div>
-        </div>
     </div>
 </div>
 

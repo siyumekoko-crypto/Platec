@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Platec.Data;
 using Platec.Models;
 
@@ -22,6 +23,12 @@ namespace Platec.Controllers
 
         public IActionResult StudentManagement()
         {
+            ViewBag.Courses = new SelectList(
+                _context.Courses,
+                "CourseId",
+                "CourseName"
+            );
+
             return View();
         }
 
@@ -59,38 +66,87 @@ namespace Platec.Controllers
             ModelState.Clear(); // <-- This clears all the form fields
             return View("Index"); // stay on the same page
         }
+
         [HttpPost]
-        public IActionResult AddStudent(string Username, string Password)
+        public IActionResult AddStudent(
+    string FirstName,
+    string MiddleName,
+    string LastName,
+    string Username,
+    string Password,
+    int CourseId)
         {
-            // Validation
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+            if (string.IsNullOrWhiteSpace(FirstName) ||
+                string.IsNullOrWhiteSpace(LastName) ||
+                string.IsNullOrWhiteSpace(Username) ||
+                string.IsNullOrWhiteSpace(Password))
             {
-                ViewBag.Message = "Please fill in all fields!";
-                return View("Index");
+                ViewBag.Message = "Please fill in all required fields!";
+                ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "CourseName");
+                return View("StudentManagement");
             }
 
-            // OPTIONAL: prevent duplicate usernames
             bool exists = _context.Students.Any(s => s.Username == Username);
             if (exists)
             {
                 ViewBag.Message = "Username already exists!";
-                return View("Index");
+                ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "CourseName");
+                return View("StudentManagement");
             }
 
-            var newStudent = new Student
+            var student = new Student
             {
+                FirstName = FirstName,
+                MiddleName = MiddleName,
+                LastName = LastName,
                 Username = Username,
-                Password = Password // ⚠ hash in production
+                Password = Password, // ⚠ hash in production
+                CourseId = CourseId
             };
 
-            _context.Students.Add(newStudent);
+            _context.Students.Add(student);
             _context.SaveChanges();
 
             ViewBag.Message = "Student added successfully!";
             ModelState.Clear();
 
+            ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "CourseName");
             return View("StudentManagement");
         }
 
+        //[HttpPost]
+        //public IActionResult AddStudent(string Username, string Password, int CourseId)
+        //{
+        //    if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+        //    {
+        //        ViewBag.Message = "Please fill in all fields!";
+        //        ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "CourseName");
+        //        return View("StudentManagement");
+        //    }
+
+        //    bool exists = _context.Students.Any(s => s.Username == Username);
+        //    if (exists)
+        //    {
+        //        ViewBag.Message = "Username already exists!";
+        //        ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "CourseName");
+        //        return View("StudentManagement");
+        //    }
+
+        //    var newStudent = new Student
+        //    {
+        //        Username = Username,
+        //        Password = Password, // hash in production
+        //        CourseId = CourseId   // ✅ SAVE COURSE
+        //    };
+
+        //    _context.Students.Add(newStudent);
+        //    _context.SaveChanges();
+
+        //    ViewBag.Message = "Student added successfully!";
+        //    ModelState.Clear();
+
+        //    ViewBag.Courses = new SelectList(_context.Courses, "CourseId", "CourseName");
+        //    return View("StudentManagement");
+        //}
     }
 }

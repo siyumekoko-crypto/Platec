@@ -19,9 +19,9 @@ namespace Platec.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            // Load all courses with teacher info
             var courses = _context.Courses
-                .Include(c => c.Teacher)  // load Teacher navigation property
+                .Include(c => c.Teacher)
+                .Include(c => c.Students)
                 .ToList();
 
             return View(courses);
@@ -59,21 +59,42 @@ namespace Platec.Controllers
             return View("AddCourses");
         }
 
-        public IActionResult CourseDetails(int id)
+        // GET: Show Course Details page (already exists)
+        public IActionResult CoursesDetails(int id)
         {
             var course = _context.Courses
-                .Include(c => c.Teacher)
-                .FirstOrDefault(c => c.CourseId == id);
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Students)
+                    .FirstOrDefault(c => c.CourseId == id);
 
             if (course == null)
                 return NotFound();
 
-            ViewBag.Teachers = _context.User
-                .Where(u => u.Role == UserRole.Teacher)
-                .ToList();
+            // Prepare SelectList for dropdown
+            ViewBag.TeacherList = new SelectList(
+                _context.User.Where(u => u.Role == UserRole.Teacher).ToList(),
+                "ID",
+                "Email",
+                course.TeacherId  // This preselects the current teacher
+            );
 
-            return PartialView("_CourseDetails", course);
+            return View(course);
         }
+
+        // POST: Set/Change teacher
+        [HttpPost]
+        public IActionResult SetTeacher(int CourseId, int TeacherId)
+        {
+            var course = _context.Courses.Find(CourseId);
+            if (course == null)
+                return NotFound();
+
+            course.TeacherId = TeacherId;
+            _context.SaveChanges();
+
+            return RedirectToAction("CoursesDetails", new { id = CourseId });
+        }
+
 
         public IActionResult Edit(int id)
         {
@@ -107,39 +128,5 @@ namespace Platec.Controllers
 
             return View(course);
         }
-
-
-        //// GET: Show Add Course Page
-        //[HttpGet]
-        //public IActionResult AddCourse()
-        //{
-        //    return View();
-        //}
-
-        //// POST: Save Course
-        //[HttpPost]
-        //public IActionResult AddCourse(string CourseName)
-        //{
-        //    if (string.IsNullOrWhiteSpace(CourseName))
-        //    {
-        //        ViewBag.Message = "Course name is required!";
-        //        return View();
-        //    }
-
-        //    // Create new course object
-        //    var course = new Course
-        //    {
-        //        CourseName = CourseName
-        //    };
-
-        //    // Add to DB and save
-        //    _context.Courses.Add(course);
-        //    _context.SaveChanges();
-
-        //    ViewBag.Message = "Course added successfully!";
-        //    ModelState.Clear(); // clear form fields
-
-        //    return View();
-        //}
     }
 }

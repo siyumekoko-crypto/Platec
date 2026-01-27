@@ -1,21 +1,63 @@
 ﻿@model Platec.Models.Course
 
-<div>
-    <h4>@Model.CourseName</h4>
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<div class="container mt-4">
+    <h2>@Model.CourseName</h2>
     <hr />
 
-    <p>
-        <strong>Teacher:</strong>
-        @(Model.Teacher != null ? Model.Teacher.Email : "None")
-    </p>
+<p>
+    <strong>Teacher:</strong>
+    @(Model.Teacher != null ? Model.Teacher.Email : "None")
+</p>
+
+    <form asp-action="SetTeacher" method="post" class="mt-3">
+        <input type="hidden" name="CourseId" value="@Model.CourseId" />
+
+        <div class="form-group mb-2">
+            <label asp-for="TeacherId">Assign Teacher</label>
+            <select class="form-control" asp-for="TeacherId" asp-items="ViewBag.TeacherList" required>
+                <option value="">-- Select Teacher --</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            @(Model.Teacher != null ? "Change Teacher" : "Set Teacher")
+        </button>
+    </form>
 
     <p>
-        <strong>Students Enrolled:</strong> 0
+        <strong>Students Enrolled:</strong> @Model.Students.Count
     </p>
 
-    <div class="mt-3">
-        <a href="/Courses/Edit/@Model.CourseId" class="btn btn-warning">
+    @if (Model.Students.Any())
+    {
+        <ul class="list-group mt-3">
+            @foreach (var student in Model.Students)
+            {
+                <li class="list-group-item">
+                    @student.LastName, @student.FirstName
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="text-muted mt-3">No students enrolled.</p>
+    }
+
+    <div class="mt-4">
+        <a asp-action="Edit"
+           asp-route-id="@Model.CourseId"
+           class="btn btn-warning">
             Edit Course
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-secondary ms-2">
+            Back to Courses
         </a>
     </div>
 </div>
