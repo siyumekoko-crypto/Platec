@@ -33,7 +33,7 @@ namespace Platec.Controllers
             }
 
             ViewBag.Error = "Invalid username or password";
-            return View("Index", "LogIn");
+            return View("Index");
         }
     }
 }

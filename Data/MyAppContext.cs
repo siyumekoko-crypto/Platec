@@ -8,7 +8,7 @@ namespace Platec.Data
         public MyAppContext(DbContextOptions<MyAppContext> options) : base(options)
         {
         }
-        public DbSet<Users> User { get; set; }
+        public DbSet<User> User { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Student> Students { get; set; }
     }

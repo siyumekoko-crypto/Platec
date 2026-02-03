@@ -13,7 +13,7 @@ namespace Platec.Models
 
         // Optional: Teacher assigned to the course
         public int? TeacherId { get; set; }  // FK to Users table
-        public virtual Users Teacher { get; set; }
+        public virtual User Teacher { get; set; }
 
         // ✅ Students enrolled in this course
         public virtual ICollection<Student> Students { get; set; } = new List<Student>();

@@ -51,7 +51,7 @@ namespace Platec.Controllers
             }
 
             // Create new user
-            var newUser = new Users
+            var newUser = new User
             {
                 Email = Email,
                 Password = Password, // hash in production

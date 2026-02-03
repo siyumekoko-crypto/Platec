@@ -7,7 +7,7 @@
 body {
     margin: 0;
     height: 100vh;
-    background: url('photo/login-bg.png');
+    background: url('@Url.Content("~/photo/login-bg.png")');
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -47,10 +47,25 @@ body {
 .btn-login:hover {
     background-color: #1e40af;
 }
+
+.error-message {
+    color: #b91c1c;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    text-align: center;
+}
 </style>
 
 <div class="login-container">
-    <h2 align = "center">Login</h2>
+    <h2 align="center">Login</h2>
+
+    @* Render the error if set *@
+    @if (ViewBag.Error != null)
+    {
+        <div class="error-message">@ViewBag.Error</div>
+    }
 
     <form asp-action="Login" method="post">
         <div class="form-group">
