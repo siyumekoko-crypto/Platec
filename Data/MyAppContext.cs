@@ -11,6 +11,18 @@ namespace Platec.Data
         public DbSet<User> User { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<ClassStatus> ClassStatuses { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ClassStatus>()
+                .HasOne(cs => cs.Student)
+                .WithMany() // or .WithMany(s => s.ClassStatuses) if navigation exists
+                .HasForeignKey(cs => cs.StudentId)
+                .OnDelete(DeleteBehavior.Restrict); // <-- NO CASCADE
+        }
+
     }
 
 }

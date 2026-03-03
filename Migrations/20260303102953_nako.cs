@@ -1,31 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Platec.Migrations
 {
     /// <inheritdoc />
-    public partial class cholocloudmigrate : Migration
+    public partial class nako : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Username",
-                table: "User",
-                newName: "Email");
-
-            migrationBuilder.RenameColumn(
-                name: "Userid",
-                table: "User",
-                newName: "ID");
-
-            migrationBuilder.AddColumn<int>(
-                name: "Role",
-                table: "User",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.ID);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Courses",
@@ -70,6 +69,32 @@ namespace Platec.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ClassStatuses",
+                columns: table => new
+                {
+                    AttendanceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassStatuses", x => x.AttendanceId);
+                    table.ForeignKey(
+                        name: "FK_ClassStatuses_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassStatuses_StudentId",
+                table: "ClassStatuses",
+                column: "StudentId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Courses_TeacherId",
                 table: "Courses",
@@ -85,24 +110,16 @@ namespace Platec.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ClassStatuses");
+
+            migrationBuilder.DropTable(
                 name: "Students");
 
             migrationBuilder.DropTable(
                 name: "Courses");
 
-            migrationBuilder.DropColumn(
-                name: "Role",
-                table: "User");
-
-            migrationBuilder.RenameColumn(
-                name: "Email",
-                table: "User",
-                newName: "Username");
-
-            migrationBuilder.RenameColumn(
-                name: "ID",
-                table: "User",
-                newName: "Userid");
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }

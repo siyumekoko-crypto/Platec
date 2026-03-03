@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Platec.Data;
 using Platec.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Platec.Controllers
 {
@@ -60,7 +61,8 @@ namespace Platec.Controllers
         }
 
         // GET: Show Course Details page (already exists)
-        public IActionResult CoursesDetails(int id)
+        // GET: CoursesDetails
+        public IActionResult CoursesDetails(int id, DateTime? date) // <--- define date here
         {
             var course = _context.Courses
                     .Include(c => c.Teacher)
@@ -70,16 +72,26 @@ namespace Platec.Controllers
             if (course == null)
                 return NotFound();
 
-            // Prepare SelectList for dropdown
+            // Prepare teacher dropdown
             ViewBag.TeacherList = new SelectList(
                 _context.User.Where(u => u.Role == UserRole.Teacher).ToList(),
                 "ID",
                 "Email",
-                course.TeacherId  // This preselects the current teacher
+                course.TeacherId
             );
+
+            // Use selected date or today
+            DateTime selectedDate = date ?? DateTime.Today;
+            ViewBag.SelectedDate = selectedDate;
+
+            // Load attendance for that specific date
+            ViewBag.TodaysAttendance = _context.ClassStatuses
+                .Where(s => s.Date.Date == selectedDate.Date)
+                .ToList();
 
             return View(course);
         }
+
 
         // POST: Set/Change teacher
         [HttpPost]
@@ -128,5 +140,42 @@ namespace Platec.Controllers
 
             return View(course);
         }
+
+        [HttpPost]
+        public IActionResult SaveAttendance(int CourseId, DateTime AttendanceDate,
+     List<int> StudentIds, List<string> Statuses)
+        {
+            for (int i = 0; i < StudentIds.Count; i++)
+            {
+                // Check if record already exists for this student + course + date
+                var existingStatus = _context.ClassStatuses
+                    .FirstOrDefault(s => s.StudentId == StudentIds[i]
+                                      && s.Date.Date == AttendanceDate.Date);
+
+                if (existingStatus != null)
+                {
+                    // Update existing record
+                    existingStatus.Status = Statuses[i];
+                    _context.ClassStatuses.Update(existingStatus);
+                }
+                else
+                {
+                    // Add new record
+                    var status = new ClassStatus
+                    {
+                        StudentId = StudentIds[i],
+                        Date = AttendanceDate,
+                        Status = Statuses[i]
+                    };
+                    _context.ClassStatuses.Add(status);
+                }
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("CoursesDetails", new { id = CourseId });
+        }
+
+
     }
 }
