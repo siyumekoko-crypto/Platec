@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Daily Attendance Report";
+    var userRole = Context.Session.GetString("UserRole");
 }
 <div class="container">
 
@@ -18,17 +19,46 @@
                        onchange="this.form.submit()" />
             </div>
 
-            <div class="col-md-2">
-                <button class="btn btn-primary">Generate</button>
-            </div>
-
+            @if (userRole == "Teacher")
+            {
+                <div class="col-md-3">
+                    <select name="courseId" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Courses</option>
+                        @if (ViewBag.AvailableCourses != null)
+                        {
+                            @foreach (var course in ViewBag.AvailableCourses)
+                            {
+                                <option value="@course.CourseId" 
+                                        selected="@(ViewBag.SelectedCourseId?.ToString() == course.CourseId.ToString())">
+                                    @course.CourseName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+            }
+            @if (userRole == "Admin")
+            {
+                <div class="col-md-3">
+                    <select name="courseId" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Courses</option>
+                        @if (ViewBag.AvailableCourses != null)
+                        {
+                            @foreach (var course in ViewBag.AvailableCourses)
+                            {
+                                <option value="@course.CourseId"
+                                        selected="@(ViewBag.SelectedCourseId?.ToString() == course.CourseId.ToString())">
+                                    @course.CourseName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+            }            
         </div>
-
     </form>
 
-
     <!-- Summary Cards -->
-
     <div class="row mb-4">
 
         <div class="col-md-4">

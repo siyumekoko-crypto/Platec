@@ -45,7 +45,7 @@ namespace Platec.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("ClassStatuses");
+                    b.ToTable("ClassStatuses", (string)null);
                 });
 
             modelBuilder.Entity("Platec.Models.Course", b =>
@@ -68,7 +68,7 @@ namespace Platec.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
                 });
 
             modelBuilder.Entity("Platec.Models.Student", b =>
@@ -108,7 +108,7 @@ namespace Platec.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("Platec.Models.User", b =>
@@ -132,7 +132,7 @@ namespace Platec.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("Platec.Models.ClassStatus", b =>
