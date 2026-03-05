@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Platec.Migrations
 {
     /// <inheritdoc />
-    public partial class nako : Migration
+    public partial class igit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

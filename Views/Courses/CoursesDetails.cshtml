@@ -55,8 +55,10 @@
                                    name="AttendanceDate"
                                    class="form-control"
                                    style="min-width: 220px;"
-                                   value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                   value="@ViewBag.AttendanceDate"
+                                   onchange="changeDate(this)"
                                    required />
+
                         </div>
 
                     </div>
@@ -160,3 +162,11 @@
     </div>
 </div>
 
+<script>
+    function changeDate(input) {
+        var selectedDate = input.value;
+        var courseId = '@Model.CourseId';
+
+        window.location.href = '/Courses/CoursesDetails?id=' + courseId + '&date=' + selectedDate;
+    }
+</script>

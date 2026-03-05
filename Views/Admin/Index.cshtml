@@ -1,51 +1,54 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Attendance Dashboard";
+
+    int present = ViewBag.Present;
+    int absent = ViewBag.Absent;
+    int late = ViewBag.Late;
 }
 
 <div class="dashboard-container">
-    <h1 class="dashboard-title">Dashboard</h1>
+    <h1>@ViewData["Title"]</h1>
 
     <div class="dashboard-cards">
         <div class="card">
-            <h3>Total Users</h3>
-            <p>120</p>
+            <h3>Present</h3>
+            <p>@present</p>
         </div>
-
         <div class="card">
-            <h3>Orders</h3>
-            <p>45</p>
+            <h3>Absent</h3>
+            <p>@absent</p>
         </div>
-
         <div class="card">
-            <h3>Reports</h3>
-            <p>8</p>
+            <h3>Late</h3>
+            <p>@late</p>
         </div>
     </div>
+
+    <div class="dashboard-chart mt-5" style="max-width: 300px; margin: 0 auto;">
+        <canvas id="attendanceChart" width="300" height="300"></canvas>
+    </div>
+
 </div>
 
-
- <style>
+<style>
     .dashboard-container {
         padding: 30px;
         font-family: Arial, sans-serif;
-    }
-
-    .dashboard-title {
-        margin-bottom: 25px;
     }
 
     .dashboard-cards {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
+        margin-bottom: 40px;
     }
 
     .card {
         background: #ffffff;
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
         .card h3 {
@@ -59,4 +62,43 @@
             color: #333;
         }
 
+    .dashboard-chart {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('attendanceChart').getContext('2d');
+    var attendanceChart = new Chart(ctx, {
+        type: 'pie', // You can also use 'bar'
+        data: {
+            labels: ['Present', 'Absent', 'Late'],
+            datasets: [{
+                label: 'Attendance Today',
+                data: [@present, @absent, @late],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.7)',   // Present - greenish
+                    'rgba(255, 99, 132, 0.7)',   // Absent - red
+                    'rgba(255, 206, 86, 0.7)'    // Late - yellow
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                title: { display: true, text: 'Attendance Summary for Today' }
+            }
+        }
+    });
+</script>

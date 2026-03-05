@@ -23,13 +23,26 @@ namespace Platec.Controllers
 
         public IActionResult StudentManagement()
         {
+            // Only show courses without a teacher
+            var availableCourses = _context.Courses
+                .Where(c => c.TeacherId == null)
+                .ToList();
+
             ViewBag.Courses = new SelectList(
-                _context.Courses,
+                availableCourses,
                 "CourseId",
                 "CourseName"
             );
 
             return View();
+
+            //ViewBag.Courses = new SelectList(
+            //    _context.Courses,
+            //    "CourseId",
+            //    "CourseName"
+            //);
+
+            //return View();
         }
 
         [HttpPost]

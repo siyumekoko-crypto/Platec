@@ -1,0 +1,170 @@
+﻿@model List<Platec.Models.ClassStatus>
+
+<div class="container">
+
+    <h3 class="mb-4">Daily Attendance Report</h3>
+
+    <form method="get" asp-action="Index">
+
+        <div class="row mb-3">
+
+            <div class="col-md-3">
+                <input type="date"
+                       name="date"
+                       value="@ViewBag.SelectedDate"
+                       class="form-control"
+                       onchange="this.form.submit()" />
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-primary">Generate</button>
+            </div>
+
+        </div>
+
+    </form>
+
+
+    <!-- Summary Cards -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5>Present</h5>
+                    <h3>@ViewBag.PresentCount</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <h5>Absent</h5>
+                    <h3>@ViewBag.AbsentCount</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h5>Late</h5>
+                    <h3>@ViewBag.LateCount</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Attendance Table -->
+
+    <table class="table table-bordered text-center">
+
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @{
+                int count = 1;
+            }
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@count</td>
+
+                    <td>
+                        @item.Student.LastName, @item.Student.FirstName
+                    </td>
+
+                    <td>
+
+                        @if (item.Status == "Present")
+                        {
+                            <span class="badge bg-success">Present</span>
+                        }
+
+                        @if (item.Status == "Absent")
+                        {
+                            <span class="badge bg-danger">Absent</span>
+                        }
+
+                        @if (item.Status == "Late")
+                        {
+                            <span class="badge bg-warning">Late</span>
+                        }
+
+                    </td>
+
+                    <td>
+                        @item.Date.ToShortDateString()
+                    </td>
+
+                </tr>
+
+                count++;
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h3 class="mb-3">Weekly Attendance Summary</h3>
+        <canvas id="weeklyChart" height="150"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctxWeek = document.getElementById('weeklyChart').getContext('2d');
+    var weeklyChart = new Chart(ctxWeek, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekLabels)),
+            datasets: [
+                {
+                    label: 'Present',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekPresent)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                },
+                {
+                    label: 'Absent',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekAbsent)),
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                },
+                {
+                    label: 'Late',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekLate)),
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Weekly Attendance' }
+            },
+            scales: {
+                y: { beginAtZero: true, precision:0 }
+            }
+        }
+    });
+</script>
+
+
+

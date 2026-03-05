@@ -4,8 +4,8 @@ namespace Platec.Models
 {
     public enum UserRole
     {
-        Admin,
-        Teacher
+        Admin = 1,
+        Teacher = 2
     }
     public class User
     {

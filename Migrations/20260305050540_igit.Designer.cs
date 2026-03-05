@@ -12,8 +12,8 @@ using Platec.Data;
 namespace Platec.Migrations
 {
     [DbContext(typeof(MyAppContext))]
-    [Migration("20260303102953_nako")]
-    partial class nako
+    [Migration("20260305050540_igit")]
+    partial class igit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,8 +1,4 @@
-﻿@{
-    var role = Context.Session.GetString("UserRole"); // "1" or "2"
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -91,59 +87,13 @@
         <nav class="nav flex-column">
             <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
 
-            @if (role == "Admin" || role == "1")
-            {
-
-                <div class="nav-item dropdown-hover">
-                    <a class="nav-link">User Management</a>
-                    <div class="dropdown-menu-custom">
-                        <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
-                            Student Management
-                        </a>
-                        <a class="dropdown-item" asp-controller="Registration" asp-action="Index">
-                            Admin Management
-                        </a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <a class="nav-link" asp-controller="Registration" asp-action="StudentManagement">
-                    Student Management
-                </a>
-
-            }
-
-            @* Only show Courses menu if the user is a Teacher (role = "Teacher" or "1") *@
-            @if (role == "Admin" || role == "1")
-            {
-
-                <a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a>
-            }
-
-            <a class="nav-link" asp-controller="Class" asp-action="Index">Classes</a>
-            <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
-        </nav>
-
-        @* <nav class="nav flex-column">
-            <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
-
-            <div class="nav-item dropdown-hover">
-                <a class="nav-link">User Management</a>
-                <div class="dropdown-menu-custom">
-                    <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
-                        Student Management
-                    </a>
-                    <a class="dropdown-item" asp-controller="Registration" asp-action="Index">
-                        Admin Management
-                    </a>
-                </div>
-            </div>
+            <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
+                Student Management
+            </a>
 
             <a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a>
-            <a class="nav-link" asp-controller="Class" asp-action="Index">Classes</a>
             <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
-        </nav> *@
+        </nav>
 
         <!-- ✅ Logout at the very bottom -->
         <div class="mt-auto p-3">

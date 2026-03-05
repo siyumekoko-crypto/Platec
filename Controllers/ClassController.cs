@@ -3,30 +3,60 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Platec.Data;
 using Platec.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Platec.Controllers
 {
-    public class CoursesController : Controller
+    public class ClassController : Controller
     {
         private readonly MyAppContext _context;
 
-        public CoursesController(MyAppContext context)
+        public ClassController(MyAppContext context)
         {
             _context = context;
         }
 
         // GET: Courses Dashboard
+        //[HttpGet]
+        //public IActionResult Index()
+        //{
+        //    var courses = _context.Courses
+        //        .Include(c => c.Teacher)
+        //        .Include(c => c.Students)
+        //        .ToList();
+
+        //    return View(courses);
+        //}
+
         [HttpGet]
         public IActionResult Index()
         {
-            var courses = _context.Courses
-                .Include(c => c.Teacher)
-                .Include(c => c.Students)
-                .ToList();
+            var role = HttpContext.Session.GetString("UserRole");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            int userId = string.IsNullOrEmpty(userIdString) ? 0 : int.Parse(userIdString);
+
+            List<Course> courses;
+
+            if (role == "Teacher")
+            {
+                // Only courses assigned to this teacher
+                courses = _context.Courses
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Students)
+                    .Where(c => c.TeacherId == userId)
+                    .ToList();
+            }
+            else
+            {
+                // Admin sees all courses
+                courses = _context.Courses
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Students)
+                    .ToList();
+            }
 
             return View(courses);
         }
+
 
         [HttpGet]
         public IActionResult AddCourses()
@@ -215,7 +245,5 @@ namespace Platec.Controllers
 
             return RedirectToAction("CoursesDetails", new { id = CourseId, date = AttendanceDate });
         }
-
-
     }
 }

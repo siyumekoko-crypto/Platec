@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Add User";
+    var role = Context.Session.GetString("UserRole"); // e.g., "Teacher" or "Admin"
+
 }
 
 <div class="add-user-container">
