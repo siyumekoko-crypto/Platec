@@ -12,8 +12,8 @@ using Platec.Data;
 namespace Platec.Migrations
 {
     [DbContext(typeof(MyAppContext))]
-    [Migration("20260305073636_nahh")]
-    partial class nahh
+    [Migration("20260305094501_never")]
+    partial class never
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

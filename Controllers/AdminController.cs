@@ -16,61 +16,64 @@ namespace Platec.Controllers
         // SHOW LOGIN PAGE
         //[HttpGet]
         [HttpGet]
-        public async Task<IActionResult> Index(int? courseId)
+        public async Task<IActionResult> Index()
         {
-            // 1️⃣ Get all courses for dropdown
-            var courses = await _context.Courses
-                .Select(c => new { c.CourseId, c.CourseName })
+
+            // 1️⃣ Get the logged-in teacher's ID
+            int teacherId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+
+            // 2️⃣ Get all course IDs assigned to this teacher
+            var teacherCourseIds = await _context.Courses
+                .Where(c => c.TeacherId == teacherId)
+                .Select(c => c.CourseId)
                 .ToListAsync();
-            ViewBag.Courses = courses;
 
-            // Default selected course
-            if (courseId == null && courses.Count > 0)
-                courseId = courses[0].CourseId;
-
-            ViewBag.SelectedCourseId = courseId;
+            // If no courses assigned, show 0 stats
+            if (teacherCourseIds.Count == 0)
+            {
+                ViewBag.PresentToday = 0;
+                ViewBag.AbsentToday = 0;
+                ViewBag.LateToday = 0;
+                ViewBag.PresentWeek = 0;
+                ViewBag.AbsentWeek = 0;
+                ViewBag.LateWeek = 0;
+                return View();
+            }
 
             var today = DateTime.Today;
             var startOfWeek = today.AddDays(-(int)today.DayOfWeek); // Sunday as first day
             var endOfWeek = startOfWeek.AddDays(6);
 
-            // 2️⃣ Today's Attendance filtered by course
+            // 3️⃣ Today's Attendance for all teacher's courses
             var todayCounts = await _context.ClassStatuses
                 .Include(a => a.Student)
-                .Where(a => a.Date.Date == today && a.Student.CourseId == courseId)
+                .Where(a => teacherCourseIds.Contains(a.Student.CourseId)
+                         && a.Date.Date == today)
                 .GroupBy(a => a.Status)
                 .Select(g => new { Status = g.Key, Count = g.Count() })
                 .ToListAsync();
 
-            int presentToday = todayCounts.FirstOrDefault(x => x.Status == "Present")?.Count ?? 0;
-            int absentToday = todayCounts.FirstOrDefault(x => x.Status == "Absent")?.Count ?? 0;
-            int lateToday = todayCounts.FirstOrDefault(x => x.Status == "Late")?.Count ?? 0;
+            ViewBag.PresentToday = todayCounts.FirstOrDefault(x => x.Status == "Present")?.Count ?? 0;
+            ViewBag.AbsentToday = todayCounts.FirstOrDefault(x => x.Status == "Absent")?.Count ?? 0;
+            ViewBag.LateToday = todayCounts.FirstOrDefault(x => x.Status == "Late")?.Count ?? 0;
 
-            // 3️⃣ Weekly Attendance filtered by course
+            // 4️⃣ Weekly Attendance for all teacher's courses
             var weekCounts = await _context.ClassStatuses
                 .Include(a => a.Student)
-                .Where(a => a.Date.Date >= startOfWeek
-                         && a.Date.Date <= endOfWeek
-                         && a.Student.CourseId == courseId)
+                .Where(a => teacherCourseIds.Contains(a.Student.CourseId)
+                         && a.Date.Date >= startOfWeek
+                         && a.Date.Date <= endOfWeek)
                 .GroupBy(a => a.Status)
                 .Select(g => new { Status = g.Key, Count = g.Count() })
                 .ToListAsync();
 
-            int presentWeek = weekCounts.FirstOrDefault(x => x.Status == "Present")?.Count ?? 0;
-            int absentWeek = weekCounts.FirstOrDefault(x => x.Status == "Absent")?.Count ?? 0;
-            int lateWeek = weekCounts.FirstOrDefault(x => x.Status == "Late")?.Count ?? 0;
-
-            // Pass to ViewBag
-            ViewBag.PresentToday = presentToday;
-            ViewBag.AbsentToday = absentToday;
-            ViewBag.LateToday = lateToday;
-
-            ViewBag.PresentWeek = presentWeek;
-            ViewBag.AbsentWeek = absentWeek;
-            ViewBag.LateWeek = lateWeek;
+            ViewBag.PresentWeek = weekCounts.FirstOrDefault(x => x.Status == "Present")?.Count ?? 0;
+            ViewBag.AbsentWeek = weekCounts.FirstOrDefault(x => x.Status == "Absent")?.Count ?? 0;
+            ViewBag.LateWeek = weekCounts.FirstOrDefault(x => x.Status == "Late")?.Count ?? 0;
 
             return View();
         }
+
         //public IActionResult Index()
         //{
         //    // Get counts of attendance status for all students today

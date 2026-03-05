@@ -22,11 +22,10 @@ namespace Platec.Controllers
 
         public IActionResult StudentManagement()
         {
-            var availableCourses = _context.Courses
-                .Where(c => c.TeacherId == null)
-                .ToList();
+            // Show all courses, regardless of whether a teacher is assigned
+            var allCourses = _context.Courses.ToList();
 
-            ViewBag.Courses = new SelectList(availableCourses, "CourseId", "CourseName");
+            ViewBag.Courses = new SelectList(allCourses, "CourseId", "CourseName");
             return View();
         }
 
