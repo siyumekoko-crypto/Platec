@@ -2,43 +2,142 @@
     ViewData["Title"] = "Add Course";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Add New Course</h2>
-        <a href="/Courses/Index" class="btn btn-secondary">Back to Courses</a>
+<div class="dashboard-wrapper">
+
+    <div class="form-card">
+
+
+        <form asp-action="AddCourse" method="post">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="CourseName">Course Name</label>
+                    <input type="text" id="CourseName" name="CourseName" placeholder="Enter course name" required />
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Add Course
+            </button>
+
+        </form>
+
+        @* Alert Notification *@
+        @if (ViewBag.Message != null)
+        {
+            var messageType = ViewBag.MessageType ?? "success"; // default to success
+                                                                <div class="alert-message @messageType">@ViewBag.Message</div>
+        }
+
     </div>
-
-    @if (ViewBag.Message != null)
-    {
-        <div class="alert alert-success mt-2">@ViewBag.Message</div>
-    }
-
-    <form asp-action="AddCourse" method="post">
-        <!-- Course Name -->
-        <div class="mb-3">
-            <label for="CourseName" class="form-label">Course Name</label>
-            <input type="text" class="form-control" id="CourseName" name="CourseName" placeholder="Enter course name" required />
-        </div>
-
-        <button type="submit" class="btn btn-success">Add Course</button>
-    </form>
 
 </div>
 
 <style>
-    .container {
-        max-width: 600px;
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 50px 40px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        max-width: 1000px;
+        width: 90%;
+        margin: 30px auto;
     }
 
-    .btn-success {
-        background-color: #28a745;
+    /* Section Title */
+    .section-title {
+        color: #4a6cf7;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: left;
     }
 
-    .btn-secondary {
-        background-color: #6c757d;
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
     }
 
-    h2 {
-        font-weight: bold;
+    /* Form groups */
+    .form-group {
+        display: flex;
+        flex-direction: column;
     }
+
+        .form-group label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #d0d4e0;
+            background: white;
+            font-size: 16px;
+            outline: none;
+            width: 100%;
+        }
+
+    /* Button */
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        background: #4a6cf7;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 30px;
+        transition: 0.25s ease;
+    }
+
+        .btn-submit:hover {
+            background: #3b54c0;
+        }
+
+    /* Alert Message */
+    .alert-message {
+        margin-top: 25px;
+        padding: 14px 18px;
+        border-left: 5px solid;
+        border-radius: 6px;
+        font-size: 15px;
+        opacity: 1;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+        .alert-message.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-message.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
 </style>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const alert = document.querySelector('.alert-message');
+        if (alert) {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 500); // remove after fade
+            }, 1000); // 1 second visible
+        }
+    });
+</script>

@@ -34,14 +34,16 @@
             </div>
 
             <button type="submit" class="btn-submit">
-                Add User
+                Add Account
             </button>
 
         </form>
 
+        @* Alert Notification *@
         @if (ViewBag.Message != null)
         {
-            <div class="alert-message">@ViewBag.Message</div>
+            var messageType = ViewBag.MessageType ?? "success"; // default to success
+                                                                <div class="alert-message @messageType">@ViewBag.Message</div>
         }
 
     </div>
@@ -123,10 +125,36 @@
     .alert-message {
         margin-top: 25px;
         padding: 14px 18px;
-        background: #eef1ff;
-        border-left: 5px solid #4a6cf7;
+        border-left: 5px solid;
         border-radius: 6px;
-        color: #333;
         font-size: 15px;
+        opacity: 1;
+        transition: opacity 0.5s ease, transform 0.5s ease;
     }
+
+        .alert-message.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-message.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
 </style>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const alert = document.querySelector('.alert-message');
+        if (alert) {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 500); // remove after fade
+            }, 1000); // 1 second visible
+        }
+    });
+</script>
