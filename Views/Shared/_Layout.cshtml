@@ -8,51 +8,62 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Platec</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <style>
         body {
-            min-height: 100vh;
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f1f3f7;
+        }
+
+        /* TOP NAVBAR */
+        .top-navbar {
+            height: 65px;
+            background: #95B2E7;
+            border-bottom: 1px solid #e5e9f2;
             display: flex;
-            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
         }
 
-        /* Sidebar */
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #012970;
+            text-decoration: none;
+        }
+
+        /* MAIN LAYOUT */
+        .main-wrapper {
+            display: flex;
+            min-height: calc(100vh - 65px);
+        }
+
+        /* SIDEBAR */
         .sidebar {
-            width: 220px;
-            background-color: #343a40;
-            color: #fff;
-            min-height: 100vh;
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e5e9f2;
+            display: flex;
+            flex-direction: column;
         }
-
-            .sidebar a {
-                color: #fff;
-                text-decoration: none;
-            }
-
-                .sidebar a:hover {
-                    background-color: #495057;
-                }
 
             .sidebar .nav-link {
-                padding: 12px 20px;
+                padding: 15px 25px;
+                font-size: 16px;
+                color: #012970;
+                font-weight: 500;
             }
 
-        /* Main content */
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-        }
+                .sidebar .nav-link:hover {
+                    background: #f5f7ff;
+                    color: #012970;
+                }
 
-        .sidebar-header {
-            font-size: 1.5rem;
-            font-weight: bold;
-            padding: 20px;
-            text-align: center;
-            background-color: #212529;
-        }
-
-        /* Hover Dropdown */
         .dropdown-hover {
             position: relative;
         }
@@ -60,7 +71,6 @@
         .dropdown-menu-custom {
             display: none;
             flex-direction: column;
-            background-color: #495057;
         }
 
         .dropdown-hover:hover .dropdown-menu-custom {
@@ -68,101 +78,109 @@
         }
 
         .dropdown-item {
-            color: #fff;
-            padding: 10px 40px;
-            text-decoration: none;
-            display: block;
+            padding: 12px 45px;
+            color: #012970;
         }
 
             .dropdown-item:hover {
-                background-color: #6c757d;
+                background: #eef2ff;
+                color: #012970;
             }
+
+        .logout-area {
+            padding: 20px;
+        }
+
+        /* CONTENT */
+        .content {
+            flex-grow: 1;
+            padding: 35px 40px;
+        }
+
+            .content header h4 {
+                margin-bottom: 3px;
+            }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: #8a94a6;
+        }
 
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column min-vh-100">
 
-        <div class="sidebar-header">
+    <!-- TOP NAVBAR -->
+    <div class="top-navbar">
+        <a class="logo" asp-controller="Admin" asp-action="Index">
             Platec
-        </div>
-
-        <nav class="nav flex-column">
-            <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
-
-            @if (role == "Admin" || role == "1")
-            {
-
-                <div class="nav-item dropdown-hover">
-                    <a class="nav-link">User Management</a>
-                    <div class="dropdown-menu-custom">
-                        <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
-                            Student Management
-                        </a>
-                        <a class="dropdown-item" asp-controller="Registration" asp-action="Index">
-                            Admin Management
-                        </a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <a class="nav-link" asp-controller="Registration" asp-action="StudentManagement">
-                    Student Management
-                </a>
-
-            }
-
-            @* Only show Courses menu if the user is a Teacher (role = "Teacher" or "1") *@
-            @if (role == "Admin" || role == "1")
-            {
-
-                <a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a>
-            }
-
-            <a class="nav-link" asp-controller="Class" asp-action="Index">Classes</a>
-            <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
-        </nav>
-
-        @* <nav class="nav flex-column">
-            <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
-
-            <div class="nav-item dropdown-hover">
-                <a class="nav-link">User Management</a>
-                <div class="dropdown-menu-custom">
-                    <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
-                        Student Management
-                    </a>
-                    <a class="dropdown-item" asp-controller="Registration" asp-action="Index">
-                        Admin Management
-                    </a>
-                </div>
-            </div>
-
-            <a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a>
-            <a class="nav-link" asp-controller="Class" asp-action="Index">Classes</a>
-            <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
-        </nav> *@
-
-        <!-- ✅ Logout at the very bottom -->
-        <div class="mt-auto p-3">
-            <a class="btn btn-danger w-100" asp-controller="LogIn" asp-action="Index">
-                Logout
-            </a>
-        </div>
-
+        </a>
+        <!-- Optional: Add user info / avatar here -->
     </div>
 
+    <!-- MAIN LAYOUT -->
+    <div class="main-wrapper">
 
-    <!-- Main Content -->
-    <div class="content">
-        <header class="mb-4">
-            <h2>@ViewData["Title"]</h2>
-        </header>
-        <main role="main">
-            @RenderBody()
-        </main>
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+            <nav class="nav flex-column mt-3">
+
+                <a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a>
+
+                @if (role == "Admin" || role == "1")
+                {
+                    <div class="nav-item dropdown-hover">
+                        <a class="nav-link">User Management</a>
+                        <div class="dropdown-menu-custom">
+                            <a class="dropdown-item" asp-controller="Registration" asp-action="StudentManagement">
+                                Student Management
+                            </a>
+                            <a class="dropdown-item" asp-controller="Registration" asp-action="Index">
+                                Admin Management
+                            </a>
+                        </div>
+                    </div>
+
+                    <a class="nav-link" asp-controller="Courses" asp-action="Index">Courses</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-controller="Registration" asp-action="StudentManagement">
+                        Student Management
+                    </a>
+
+                    <a class="nav-link" asp-controller="Class" asp-action="Index">Classes</a>
+
+                }
+
+                <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
+
+            </nav>
+
+            <!-- Logout -->
+            <div class="mt-auto logout-area">
+                <a class="btn btn-danger w-100" asp-controller="LogIn" asp-action="Index">
+                    Logout
+                </a>
+            </div>
+
+        </div>
+
+        <!-- PAGE CONTENT -->
+        <div class="content">
+            <header class="mb-3">
+                <h4>@ViewData["Title"]</h4>
+                <div class="breadcrumb">
+                    Home / @ViewData["Title"]
+                </div>
+            </header>
+
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

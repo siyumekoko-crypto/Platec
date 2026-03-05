@@ -2,93 +2,136 @@
     ViewData["Title"] = "Add Student";
 }
 
-<div class="add-user-container">
-    <h2>Add New Student</h2>
+<div class="dashboard-wrapper">
 
-    <form asp-action="AddStudent" method="post">
+    <div class="form-card">
 
+        <form asp-action="AddStudent" method="post">
 
-        <div class="form-group mb-3">
-            <label for="Username">Username</label>
-            <input type="text"
-                   class="form-control"
-                   id="Username"
-                   name="Username"
-                   placeholder="Enter username"
-                   required />
-        </div>
+            <div class="form-grid">
 
-        <div class="form-group mb-3">
-            <label for="Password">Password</label>
-            <input type="password"
-                   class="form-control"
-                   id="Password"
-                   name="Password"
-                   placeholder="Enter password"
-                   required />
-        </div>
+                <div class="form-group">
+                    <label for="FirstName">First Name</label>
+                    <input type="text" id="FirstName" name="FirstName" placeholder="Enter first name" required />
+                </div>
 
-        <div class="form-group mb-3">
-            <label for="FirstName">First Name</label>
-            <input type="text"
-                   class="form-control"
-                   id="FirstName"
-                   name="FirstName"
-                   placeholder="Enter first name"
-                   required />
-        </div>
+                <div class="form-group">
+                    <label for="MiddleName">Middle Name</label>
+                    <input type="text" id="MiddleName" name="MiddleName" placeholder="Enter middle name (optional)" />
+                </div>
 
-        <div class="form-group mb-3">
-            <label for="MiddleName">Middle Name</label>
-            <input type="text"
-                   class="form-control"
-                   id="MiddleName"
-                   name="MiddleName"
-                   placeholder="Enter middle name (optional)" />
-        </div>
+                <div class="form-group">
+                    <label for="LastName">Last Name</label>
+                    <input type="text" id="LastName" name="LastName" placeholder="Enter last name" required />
+                </div>
 
-        <div class="form-group mb-3">
-            <label for="LastName">Last Name</label>
-            <input type="text"
-                   class="form-control"
-                   id="LastName"
-                   name="LastName"
-                   placeholder="Enter last name"
-                   required />
-        </div>
+                <div class="form-group">
+                    <label for="Username">Username</label>
+                    <input type="text" id="Username" name="Username" placeholder="Enter username" required />
+                </div>
 
-        <div class="form-group mb-3">
-        <label for="CourseId">Course</label>
-        <select class="form-control"
-                id="CourseId"
-                name="CourseId"
-                asp-items="ViewBag.Courses"
-                required>
-            <option value="">-- Select Course --</option>
-        </select>
-        </div>
+                <div class="form-group">
+                    <label for="Password">Password</label>
+                    <input type="password" id="Password" name="Password" placeholder="Enter password" required />
+                </div>
 
-        <!-- Role is automatically Student -->
-        <input type="hidden" name="Role" value="Student" />
+                <div class="form-group">
+                    <label for="CourseId">Course</label>
+                    <select id="CourseId" name="CourseId" asp-items="ViewBag.Courses" required>
+                        <option value="">-- Select Course --</option>
+                    </select>
+                </div>
 
-        <button type="submit" class="btn btn-primary w-100">
-            Add Student
-        </button>
-    </form>
+            </div>
 
-    @if (ViewBag.Message != null)
-    {
-        <div class="alert alert-info mt-3">@ViewBag.Message</div>
-    }
+            <input type="hidden" name="Role" value="Student" />
+
+            <button type="submit" class="btn-submit">
+                Add Student
+            </button>
+
+        </form>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert-message">@ViewBag.Message</div>
+        }
+
+    </div>
+
 </div>
 
 <style>
-    .add-user-container {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 50px 40px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        max-width: 1000px;
+        margin-top: 30px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+    }
+
+    /* Form groups */
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .form-group label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #d0d4e0;
+            background: white;
+            font-size: 16px;
+            outline: none;
+            width: 100%;
+        }
+
+    /* Button */
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        background: #4a6cf7;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 30px;
+        transition: 0.25s ease;
+    }
+
+        .btn-submit:hover {
+            background: #3b54c0;
+        }
+
+    /* Alert Message */
+    .alert-message {
+        margin-top: 25px;
+        padding: 14px 18px;
+        background: #eef1ff;
+        border-left: 5px solid #4a6cf7;
+        border-radius: 6px;
+        color: #333;
+        font-size: 15px;
     }
 </style>

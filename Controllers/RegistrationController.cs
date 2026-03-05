@@ -83,12 +83,13 @@ namespace Platec.Controllers
         [HttpPost]
         public IActionResult AddStudent(
     string FirstName,
-    string MiddleName,
+    string MiddleName, // optional
     string LastName,
     string Username,
     string Password,
     int CourseId)
         {
+            // Only require FirstName, LastName, Username, Password
             if (string.IsNullOrWhiteSpace(FirstName) ||
                 string.IsNullOrWhiteSpace(LastName) ||
                 string.IsNullOrWhiteSpace(Username) ||
@@ -110,7 +111,7 @@ namespace Platec.Controllers
             var student = new Student
             {
                 FirstName = FirstName,
-                MiddleName = MiddleName,
+                MiddleName = string.IsNullOrWhiteSpace(MiddleName) ? null : MiddleName, // store null if empty
                 LastName = LastName,
                 Username = Username,
                 Password = Password, // ⚠ hash in production
