@@ -4,199 +4,332 @@
     ViewData["Title"] = "Daily Attendance Report";
     var userRole = Context.Session.GetString("UserRole");
 }
-<div class="container">
 
+<div class="dashboard-wrapper">
 
-    <form method="get" asp-action="Index">
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
 
-        <div class="row mb-3">
+        <!-- Filters -->
+        <div class="form-card">
+            <h2 class="section-title">Attendance Filters</h2>
 
-            <div class="col-md-3">
-                <input type="date"
-                       name="date"
-                       value="@ViewBag.SelectedDate"
-                       class="form-control"
-                       onchange="this.form.submit()" />
-            </div>
+            <form method="get" asp-action="Index">
 
-            @if (userRole == "Teacher")
-            {
-                <div class="col-md-3">
-                    <select name="courseId" class="form-control" onchange="this.form.submit()">
-                        <option value="">All Courses</option>
-                        @if (ViewBag.AvailableCourses != null)
-                        {
-                            @foreach (var course in ViewBag.AvailableCourses)
+                <div class="form-group mb-3">
+                    <label>Date</label>
+                    <input type="date"
+                           name="date"
+                           value="@ViewBag.SelectedDate"
+                           class="form-control"
+                           onchange="this.form.submit()" />
+                </div>
+
+                @if (userRole == "Teacher" || userRole == "Admin")
+                {
+                    <div class="form-group">
+                        <label>Course</label>
+
+                        <select name="courseId" class="form-control" onchange="this.form.submit()">
+                            <option value="">All Courses</option>
+
+                            @if (ViewBag.AvailableCourses != null)
                             {
-                                <option value="@course.CourseId" 
-                                        selected="@(ViewBag.SelectedCourseId?.ToString() == course.CourseId.ToString())">
-                                    @course.CourseName
-                                </option>
+                                @foreach (var course in ViewBag.AvailableCourses)
+                                {
+                                    <option value="@course.CourseId"
+                                            selected="@(ViewBag.SelectedCourseId?.ToString() == course.CourseId.ToString())">
+                                        @course.CourseName
+                                    </option>
+                                }
                             }
+
+                        </select>
+                    </div>
+                }
+
+            </form>
+        </div>
+
+
+        <!-- Attendance Table -->
+        <div class="form-card">
+
+            <h2 class="section-title">Attendance Details</h2>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered text-center">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int count = 1;
                         }
-                    </select>
-                </div>
-            }
-            @if (userRole == "Admin")
-            {
-                <div class="col-md-3">
-                    <select name="courseId" class="form-control" onchange="this.form.submit()">
-                        <option value="">All Courses</option>
-                        @if (ViewBag.AvailableCourses != null)
+
+                        @foreach (var item in Model)
                         {
-                            @foreach (var course in ViewBag.AvailableCourses)
-                            {
-                                <option value="@course.CourseId"
-                                        selected="@(ViewBag.SelectedCourseId?.ToString() == course.CourseId.ToString())">
-                                    @course.CourseName
-                                </option>
-                            }
+                            <tr>
+
+                                <td>@count</td>
+
+                                <td>
+                                    @item.Student.LastName, @item.Student.FirstName
+                                </td>
+
+                                <td>
+
+                                    @if (item.Status == "Present")
+                                    {
+                                        <span class="badge bg-success">Present</span>
+                                    }
+
+                                    @if (item.Status == "Absent")
+                                    {
+                                        <span class="badge bg-danger">Absent</span>
+                                    }
+
+                                    @if (item.Status == "Late")
+                                    {
+                                        <span class="badge bg-warning text-dark">Late</span>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    @item.Date.ToShortDateString()
+                                </td>
+
+                            </tr>
+
+                            count++;
                         }
-                    </select>
-                </div>
-            }            
-        </div>
-    </form>
 
-    <!-- Summary Cards -->
-    <div class="row mb-4">
+                    </tbody>
 
-        <div class="col-md-4">
-            <div class="card bg-success text-white">
-                <div class="card-body text-center">
-                    <h5>Present</h5>
-                    <h3>@ViewBag.PresentCount</h3>
-                </div>
+                </table>
+
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card bg-danger text-white">
-                <div class="card-body text-center">
-                    <h5>Absent</h5>
-                    <h3>@ViewBag.AbsentCount</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card bg-warning text-white">
-                <div class="card-body text-center">
-                    <h5>Late</h5>
-                    <h3>@ViewBag.LateCount</h3>
-                </div>
-            </div>
         </div>
 
     </div>
 
 
-    <!-- Attendance Table -->
 
-    <table class="table table-bordered text-center">
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
 
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>Student</th>
-                <th>Status</th>
-                <th>Date</th>
-            </tr>
-        </thead>
+        <!-- Daily Summary -->
+        <div class="form-card">
 
-        <tbody>
+            <h2 class="section-title">Daily Attendance Summary</h2>
 
-            @{
-                int count = 1;
-            }
+            <div class="row g-3 text-center">
 
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@count</td>
+                <div class="col-md-4 col-12">
+                    <div class="card summary-card bg-success text-white">
+                        <div class="card-body">
+                            <h5>Present</h5>
+                            <h3>@ViewBag.PresentCount</h3>
+                        </div>
+                    </div>
+                </div>
 
-                    <td>
-                        @item.Student.LastName, @item.Student.FirstName
-                    </td>
+                <div class="col-md-4 col-12">
+                    <div class="card summary-card bg-danger text-white">
+                        <div class="card-body">
+                            <h5>Absent</h5>
+                            <h3>@ViewBag.AbsentCount</h3>
+                        </div>
+                    </div>
+                </div>
 
-                    <td>
+                <div class="col-md-4 col-12">
+                    <div class="card summary-card bg-warning text-dark">
+                        <div class="card-body">
+                            <h5>Late</h5>
+                            <h3>@ViewBag.LateCount</h3>
+                        </div>
+                    </div>
+                </div>
 
-                        @if (item.Status == "Present")
-                        {
-                            <span class="badge bg-success">Present</span>
-                        }
+            </div>
 
-                        @if (item.Status == "Absent")
-                        {
-                            <span class="badge bg-danger">Absent</span>
-                        }
+        </div>
 
-                        @if (item.Status == "Late")
-                        {
-                            <span class="badge bg-warning">Late</span>
-                        }
 
-                    </td>
 
-                    <td>
-                        @item.Date.ToShortDateString()
-                    </td>
+        <!-- Weekly Chart -->
+        <div class="form-card">
 
-                </tr>
+            <h2 class="section-title">Weekly Attendance Summary</h2>
 
-                count++;
-            }
+            <canvas id="weeklyChart"></canvas>
 
-        </tbody>
+        </div>
 
-    </table>
-
-</div>
-
-<div class="row mb-5">
-    <div class="col-md-12">
-        <h3 class="mb-3">Weekly Attendance Summary</h3>
-        <canvas id="weeklyChart" height="150"></canvas>
     </div>
+
 </div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
+
     var ctxWeek = document.getElementById('weeklyChart').getContext('2d');
+
     var weeklyChart = new Chart(ctxWeek, {
+
         type: 'bar',
+
         data: {
+
             labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekLabels)),
+
             datasets: [
+
                 {
                     label: 'Present',
                     data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekPresent)),
-                    backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    backgroundColor: 'rgba(75,192,192,0.7)'
                 },
+
                 {
                     label: 'Absent',
                     data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekAbsent)),
-                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    backgroundColor: 'rgba(255,99,132,0.7)'
                 },
+
                 {
                     label: 'Late',
                     data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.WeekLate)),
-                    backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                    backgroundColor: 'rgba(255,206,86,0.7)'
                 }
+
             ]
+
         },
+
         options: {
+
             responsive: true,
+
+            maintainAspectRatio: false,
+
             plugins: {
-                legend: { position: 'top' },
-                title: { display: true, text: 'Weekly Attendance' }
+
+                legend: {
+                    position: 'top'
+                },
+
+                title: {
+                    display: true,
+                    text: 'Weekly Attendance'
+                }
+
             },
+
             scales: {
-                y: { beginAtZero: true, precision:0 }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
             }
+
         }
+
     });
+
 </script>
 
 
 
+<style>
+
+    /* MAIN GRID */
+
+    .dashboard-wrapper {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 25px;
+        padding: 25px;
+        width: 100%;
+    }
+
+
+
+
+
+    /* COLUMNS */
+
+    .left-column,
+    .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+
+    /* CARD */
+
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+
+
+    /* TITLES */
+
+    .section-title {
+        color: #4a6cf7;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+
+    /* SUMMARY CARDS */
+
+    .summary-card {
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+
+    /* TABLE */
+
+    .table {
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+
+    /* CHART */
+
+    #weeklyChart {
+        width: 100% !important;
+        height: 350px !important;
+    }
+
+</style>
