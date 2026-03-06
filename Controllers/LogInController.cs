@@ -52,9 +52,9 @@ namespace Platec.Controllers
 
                 // Redirect based on role
                 if (user.Role == UserRole.Teacher)
-                    return RedirectToAction("Index", "Report"); // teacher dashboard
+                    return RedirectToAction("Index", "Class"); // teacher dashboard
                 else
-                    return RedirectToAction("Index", "Report"); // admin dashboard
+                    return RedirectToAction("Index", "Admin"); // admin dashboard
             }
 
             ViewBag.Error = "Invalid username or password";

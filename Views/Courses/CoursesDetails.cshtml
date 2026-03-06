@@ -5,201 +5,161 @@
 }
 
 <div class="container mt-4">
+    <h2>@Model.CourseName</h2>
+    <hr />
 
-    <!-- Course Info Card -->
-    <div class="card h-100 shadow-sm mb-4">
-        <div class="card-body">
+<p>
+    <strong>Teacher:</strong>
+    @(Model.Teacher != null ? Model.Teacher.Email : "None")
+</p>
 
-            <h5 class="card-title">@Model.CourseName</h5>
+    <form asp-action="SetTeacher" method="post" class="mt-3 d-flex align-items-end gap-2">
+        <input type="hidden" name="CourseId" value="@Model.CourseId" />
 
-            <p class="card-text">
-                <strong>Teacher:</strong>
-                @(Model.Teacher != null ? Model.Teacher.Email : "None")
-            </p>
-
-            <form asp-action="SetTeacher" method="post" class="mt-3 d-flex align-items-end gap-2 flex-wrap">
-
-                <input type="hidden" name="CourseId" value="@Model.CourseId" />
-
-                <div class="form-group">
-                    <label asp-for="TeacherId">Assign Teacher</label>
-                    <select class="form-control" asp-for="TeacherId" asp-items="ViewBag.TeacherList" required>
-                        <option value="">-- Select Teacher --</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    @(Model.Teacher != null ? "Change Teacher" : "Set Teacher")
-                </button>
-
-            </form>
-
-            <p class="card-text mt-3">
-                <strong>Students Enrolled:</strong> @Model.Students.Count
-            </p>
-
+        <div class="form-group mb-2">
+            <label asp-for="TeacherId">Assign Teacher</label>
+            <select class="form-control" asp-for="TeacherId" asp-items="ViewBag.TeacherList" required>
+                <option value="">-- Select Teacher --</option>
+            </select>
         </div>
-    </div>
 
+        <button type="submit" class="btn btn-primary">
+            @(Model.Teacher != null ? "Change Teacher" : "Set Teacher")
+        </button>
+    </form>
+
+    <p>
+        <strong>Students Enrolled:</strong> @Model.Students.Count
+    </p>
 
     @if (Model.Students.Any())
     {
-        <!-- Attendance Card -->
-        <div class="card h-100 shadow-sm mb-4">
-            <div class="card-body">
+        <div class="mt-4">
+            <h4>Attendance Sheet</h4>
 
+            <form asp-action="SaveAttendance" method="post">
 
+                <input type="hidden" name="CourseId" value="@Model.CourseId" />
 
-                <form asp-action="SaveAttendance" method="post">
+                <!-- Date Picker -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
 
-                    <input type="hidden" name="CourseId" value="@Model.CourseId" />
+                        <div>
+                            <h5 class="mb-1">Select Attendance Date</h5>
+                            <small class="text-muted">Choose date to record attendance</small>
+                        </div>
 
-                    <!-- Date Picker -->
-                        <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-
-                            <h5 class="card-title mb-3 ">Attendance Sheet</h5>
-                            <div>
-                                <input type="date"
-                                       name="AttendanceDate"
-                                       class="form-control"
-                                       style="min-width:220px;"
-                                       value="@ViewBag.AttendanceDate"
-                                       onchange="changeDate(this)"
-                                       required />
-                            </div>
+                        <div>
+                            <input type="date"
+                                   name="AttendanceDate"
+                                   class="form-control"
+                                   style="min-width: 220px;"
+                                   value="@ViewBag.AttendanceDate"
+                                   onchange="changeDate(this)"
+                                   required />
 
                         </div>
 
-
-                    <!-- Table -->
-                    <div class="table-responsive">
-
-                        <table class="table table-bordered table-hover align-middle text-center">
-
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Student Name</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                @{
-                                    int count = 1;
-                                }
-
-                                @foreach (var student in Model.Students)
-                                {
-                                    var todaysAttendance = ViewBag.TodaysAttendance as List<ClassStatus>;
-                                    var existingStatus = todaysAttendance?.FirstOrDefault(a => a.StudentId == student.ID);
-
-                                    <tr>
-
-                                        <td>@count</td>
-
-                                        <td class="text-start">
-                                            @student.LastName, @student.FirstName
-                                        </td>
-
-                                        <td>
-
-                                            <input type="hidden" name="StudentIds" value="@student.ID" />
-
-                                            <select name="Statuses" class="form-select form-select-sm" required>
-
-                                                <option value="">-- Select --</option>
-
-                                                @if (existingStatus?.Status == "Present")
-                                                {
-                                                    <option value="Present" selected>Present</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="Present">Present</option>
-                                                }
-
-                                                @if (existingStatus?.Status == "Absent")
-                                                {
-                                                    <option value="Absent" selected>Absent</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="Absent">Absent</option>
-                                                }
-
-                                                @if (existingStatus?.Status == "Late")
-                                                {
-                                                    <option value="Late" selected>Late</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="Late">Late</option>
-                                                }
-
-                                            </select>
-
-                                        </td>
-
-                                    </tr>
-
-                                    count++;
-                                }
-
-                            </tbody>
-
-                        </table>
-
                     </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int count = 1;
+                            }
+@foreach (var student in Model.Students)
+{
+    var todaysAttendance = ViewBag.TodaysAttendance as List<ClassStatus>;
+    var existingStatus = todaysAttendance?.FirstOrDefault(a => a.StudentId == student.ID);
+
+    <tr>
+        <td>@count</td>
+        <td class="text-start">
+            @student.LastName, @student.FirstName
+        </td>
+        <td>
+            <input type="hidden" name="StudentIds" value="@student.ID" />
+
+            <select name="Statuses" class="form-select form-select-sm" required>
+                <option value="">-- Select --</option>
+
+                @if (existingStatus?.Status == "Present")
+                {
+                    <option value="Present" selected>Present</option>
+                }
+                else
+                {
+                    <option value="Present">Present</option>
+                }
+
+                @if (existingStatus?.Status == "Absent")
+                {
+                    <option value="Absent" selected>Absent</option>
+                }
+                else
+                {
+                    <option value="Absent">Absent</option>
+                }
+
+                @if (existingStatus?.Status == "Late")
+                {
+                    <option value="Late" selected>Late</option>
+                }
+                else
+                {
+                    <option value="Late">Late</option>
+                }
+
+            </select>
+        </td>
+    </tr>
+
+    count++;
+}
 
 
-                    <div class="mt-3 text-end">
-@*                         <a asp-action="Index"
-                           class="btn btn-secondary ms-2">
+                        </tbody>
+                    </table>
+                </div>
 
-                            Back to Courses
+                <div class="mt-3 text-end">
+                    <button type="submit" class="btn btn-success">
+                        Save Attendance
+                    </button>
+                </div>
 
-                        </a> *@
-
-                        <button type="submit" class="btn btn-success">
-                            Save Attendance
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
+            </form>
         </div>
     }
+
     else
     {
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <p class="text-muted">No students enrolled.</p>
-            </div>
-        </div>
+        <p class="text-muted mt-3">No students enrolled.</p>
     }
 
+    <div class="mt-4">
+        <a asp-action="Edit"
+           asp-route-id="@Model.CourseId"
+           class="btn btn-warning">
+            Edit Course
+        </a>
 
-@*     <!-- Action Buttons -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-
-            <a asp-action="Edit"
-               asp-route-id="@Model.CourseId"
-               class="btn btn-warning">
-
-                Edit Course
-
-            </a>
-
-           
-
-        </div>
+        <a asp-action="Index"
+           class="btn btn-secondary ms-2">
+            Back to Courses
+        </a>
     </div>
- *@
 </div>
 
 <script>
@@ -210,19 +170,3 @@
         window.location.href = '/Courses/CoursesDetails?id=' + courseId + '&date=' + selectedDate;
     }
 </script>
-
-<style>
-    .card-title {
-        font-weight: bold;
-        color: #4a6cf7;
-    }
-
-    .attendance-title {
-        color: #4a6cf7;
-        font-weight: bold;
-    }
-
-    .table th {
-        vertical-align: middle;
-    }
-</style>
