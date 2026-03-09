@@ -213,7 +213,7 @@ namespace Platec.Controllers
 
         [HttpPost]
         public IActionResult SaveAttendance(int CourseId, DateTime AttendanceDate,
-     List<int> StudentIds, List<string> Statuses)
+        List<int> StudentIds, List<string> Statuses)
         {
             for (int i = 0; i < StudentIds.Count; i++)
             {
