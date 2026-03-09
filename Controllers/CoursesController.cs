@@ -20,10 +20,29 @@ namespace Platec.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var courses = _context.Courses
-                .Include(c => c.Teacher)
-                .Include(c => c.Students)
-                .ToList();
+            var role = HttpContext.Session.GetString("UserRole");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            int userId = string.IsNullOrEmpty(userIdString) ? 0 : int.Parse(userIdString);
+
+            List<Course> courses;
+
+            if (role == "Teacher")
+            {
+                // Only courses assigned to this teacher
+                courses = _context.Courses
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Students)
+                    .Where(c => c.TeacherId == userId)
+                    .ToList();
+            }
+            else
+            {
+                // Admin sees all courses
+                courses = _context.Courses
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Students)
+                    .ToList();
+            }
 
             return View(courses);
         }
