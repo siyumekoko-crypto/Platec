@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Course Details";
+    var role = Context.Session.GetString("UserRole"); // "1" or "2"
 }
 
 <div class="container mt-4">
@@ -16,16 +17,20 @@
     <form asp-action="SetTeacher" method="post" class="mt-3 d-flex align-items-end gap-2">
         <input type="hidden" name="CourseId" value="@Model.CourseId" />
 
-        <div class="form-group mb-2">
-            <label asp-for="TeacherId">Assign Teacher</label>
-            <select class="form-control" asp-for="TeacherId" asp-items="ViewBag.TeacherList" required>
-                <option value="">-- Select Teacher --</option>
-            </select>
-        </div>
+        <!--UI available only to teachers-->
+        @if (role == "Teacher" || role == "2")
+        {
+            <div class="form-group mb-2">
+                <label asp-for="TeacherId">Assign Teacher</label>
+                <select class="form-control" asp-for="TeacherId" asp-items="ViewBag.TeacherList" required>
+                    <option value="">-- Select Teacher --</option>
+                </select>
+            </div>
 
-        <button type="submit" class="btn btn-primary">
-            @(Model.Teacher != null ? "Change Teacher" : "Set Teacher")
-        </button>
+            <button type="submit" class="btn btn-primary">
+                @(Model.Teacher != null ? "Change Teacher" : "Set Teacher")
+            </button>
+        }
     </form>
 
     <p>
